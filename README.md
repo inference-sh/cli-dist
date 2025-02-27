@@ -1,37 +1,42 @@
 # cli-dist
 
-Binary distribution for the inference.sh CLI tool.
+binary distribution for the inference.sh CLI tool.
 
-## Quick Install
+## quick install
 
-### Using curl (Linux/macOS)
+### using curl (linux/macos)
 
     # Install latest version
-    curl -L https://raw.githubusercontent.com/inference-sh/cli-dist/main/install.sh | bash
+    curl -L https://cli.inference.sh/install.sh | bash
 
     # Or install specific version
-    VERSION=1.0.0 curl -L https://raw.githubusercontent.com/inference-sh/cli-dist/main/install.sh | bash
+    VERSION=1.0.0 curl -L https://cli.inference.sh/install.sh | bash
 
-### Using pip
+<!-- ### using pip -->
 
-    pip install git+https://github.com/inference-sh/cli.git
+    <!-- pip install git+https://github.com/inference-sh/cli.git -->
 
-## Manual Installation
+## manual installation
 
-1. Download the appropriate binary for your system:
-   - Linux (x86_64): [inferencesh-linux-amd64](https://raw.githubusercontent.com/inference-sh/cli-dist/main/latest/inferencesh-linux-amd64)
+1. download the appropriate binary for your system:
+   - linux (x86_64): [inferencesh-linux-amd64](https://raw.githubusercontent.com/inference-sh/cli-dist/main/latest/inferencesh-linux-amd64)
    - macOS (Intel): [inferencesh-darwin-amd64](https://raw.githubusercontent.com/inference-sh/cli-dist/main/latest/inferencesh-darwin-amd64)
    - macOS (Apple Silicon): [inferencesh-darwin-arm64](https://raw.githubusercontent.com/inference-sh/cli-dist/main/latest/inferencesh-darwin-arm64)
-   - Windows: [inferencesh-windows-amd64.exe](https://raw.githubusercontent.com/inference-sh/cli-dist/main/latest/inferencesh-windows-amd64.exe)
+   - windows: [inferencesh-windows-amd64.exe](https://raw.githubusercontent.com/inference-sh/cli-dist/main/latest/inferencesh-windows-amd64.exe)
 
-2. Make the binary executable (Linux/macOS):
+2. make the binary executable (linux/macos):
 
     chmod +x ./inferencesh-*
 
-3. Move to a directory in your PATH:
+3. move to a directory in your path:
 
-    # Linux/macOS
+    # linux/macos
     sudo mv ./inferencesh-* /usr/local/bin/inferencesh
 
-    # Optional: Create infsh alias
+    # optional: create infsh alias
     sudo ln -s /usr/local/bin/inferencesh /usr/local/bin/infsh
+
+## version history
+
+### v0.1.0
+
