@@ -16,7 +16,13 @@ curl -fsSL https://cli.inference.sh/install.sh | VERSION=1.0.0 bash
 
 ### verify the installation
 ```
-inferencesh --version
+inferencesh version
+```
+
+or if you are lazy 
+
+```
+infsh version
 ```
 
 ## manual installation
