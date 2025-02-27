@@ -4,22 +4,20 @@ binary distribution for the inference.sh CLI tool.
 
 ## quick install
 
-### using curl (linux/macos)
+# install latest version
+```
+curl -fsSL https://cli.inference.sh/install.sh | bash
+```
 
-    # install latest version
-    ```
-    curl -fsSL https://cli.inference.sh/install.sh | bash
-    ```
+# or install specific version
+```
+curl -fsSL https://cli.inference.sh/install.sh | VERSION=1.0.0 bash
+```
 
-    # or install specific version
-    ```
-    curl -fsSL https://cli.inference.sh/install.sh | VERSION=1.0.0 bash
-    ```
-
-    # to verify the installation
-    ```
-    inferencesh --version
-    ```
+# to verify the installation
+```
+inferencesh --version
+```
 
 ## manual installation
 
