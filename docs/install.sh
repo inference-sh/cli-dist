@@ -30,25 +30,36 @@ if [ "$(id -u)" -ne 0 ] && [ -z "$INSTALL_DIR" ]; then
 
     # Detect shell and configure PATH
     if [ "$OS" = "darwin" ]; then
-        # macOS typically uses .zshrc by default since Catalina
-        if [ -n "$ZSH_VERSION" ]; then
-            SHELL_RC="$HOME/.zshrc"
-        else
-            SHELL_RC="$HOME/.bash_profile"
+        # Check both .zshrc and .bash_profile on macOS
+        if [ -f "$HOME/.zshrc" ]; then
+            ZSH_RC="$HOME/.zshrc"
+            if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && ! grep -q '$HOME/.local/bin' "$ZSH_RC"; then
+                echo "Adding $INSTALL_DIR to PATH in .zshrc..."
+                echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$ZSH_RC"
+            fi
+        fi
+        if [ -f "$HOME/.bash_profile" ]; then
+            BASH_RC="$HOME/.bash_profile"
+            if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && ! grep -q '$HOME/.local/bin' "$BASH_RC"; then
+                echo "Adding $INSTALL_DIR to PATH in .bash_profile..."
+                echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$BASH_RC"
+            fi
         fi
     else
         # Linux typically uses .bashrc
-        SHELL_RC="$HOME/.bashrc"
+        BASH_RC="$HOME/.bashrc"
+        if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && ! grep -q '$HOME/.local/bin' "$BASH_RC"; then
+            echo "Adding $INSTALL_DIR to PATH in .bashrc..."
+            echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$BASH_RC"
+        fi
     fi
 
-    # Add to PATH if not already there
-    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-        echo "Adding $INSTALL_DIR to your PATH..."
-        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$SHELL_RC"
-        export PATH="$HOME/.local/bin:$PATH"
-        echo "NOTE: You may need to restart your terminal or run:"
-        echo "      source $SHELL_RC"
-    fi
+    # Update current session's PATH
+    export PATH="$HOME/.local/bin:$PATH"
+    echo "NOTE: You may need to restart your terminal or run:"
+    echo "      source ~/.zshrc    # if using zsh"
+    echo "      source ~/.bashrc   # if using bash on Linux"
+    echo "      source ~/.bash_profile # if using bash on macOS"
 else
     INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
 fi
