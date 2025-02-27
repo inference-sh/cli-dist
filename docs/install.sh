@@ -22,56 +22,53 @@ case ${ARCH} in
         exit 1
         ;;
 esac
+# Set install directory and handle platform-specific setup
+if [ "$(id -u)" -ne 0 ] && [ -z "$INSTALL_DIR" ]; then
+    INSTALL_DIR="$HOME/.local/bin"
+    mkdir -p "$INSTALL_DIR"
 
-# Set install directory (default to /usr/local/bin or allow custom)
-INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
+    # Detect shell and configure PATH
+    if [ "$OS" = "darwin" ]; then
+        # macOS typically uses .zshrc by default since Catalina
+        if [ -n "$ZSH_VERSION" ]; then
+            SHELL_RC="$HOME/.zshrc"
+        else
+            SHELL_RC="$HOME/.bash_profile"
+        fi
+    else
+        # Linux typically uses .bashrc
+        SHELL_RC="$HOME/.bashrc"
+    fi
 
-# Base URL for downloads
-BASE_URL="https://raw.githubusercontent.com/inference-sh/cli-dist/main"
-
-# Construct binary name and URL
-BINARY_NAME="inferencesh-${OS}-${ARCH}"
-if [ "${OS}" = "windows" ]; then
-    BINARY_NAME="${BINARY_NAME}.exe"
+    # Add to PATH if not already there
+    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+        echo "Adding $INSTALL_DIR to your PATH..."
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$SHELL_RC"
+        export PATH="$HOME/.local/bin:$PATH"
+        echo "NOTE: You may need to restart your terminal or run:"
+        echo "      source $SHELL_RC"
+    fi
+else
+    INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
 fi
-
-DOWNLOAD_URL="${BASE_URL}/${VERSION}/${BINARY_NAME}"
-
-echo "Installing inference.sh CLI..."
-echo "OS: ${OS}"
-echo "Architecture: ${ARCH}"
-echo "Version: ${VERSION}"
-echo "Download URL: ${DOWNLOAD_URL}"
-
-# Create temp directory
-TMP_DIR=$(mktemp -d)
-trap 'rm -rf ${TMP_DIR}' EXIT
-
-# Download binary
-echo "Downloading binary..."
-curl -L "${DOWNLOAD_URL}" -o "${TMP_DIR}/${BINARY_NAME}"
-
-# Make binary executable
-chmod +x "${TMP_DIR}/${BINARY_NAME}"
-
-# Check for existing installation
+# Remove existing installation and symlink
 if [ -f "${INSTALL_DIR}/inferencesh" ]; then
     echo "Removing existing installation..."
-    sudo rm "${INSTALL_DIR}/inferencesh"
+    rm "${INSTALL_DIR}/inferencesh"
+fi
+
+if [ -L "${INSTALL_DIR}/infsh" ]; then
+    echo "Removing existing symlink..."
+    rm "${INSTALL_DIR}/infsh"
 fi
 
 # Move binary to install directory
 echo "Installing to ${INSTALL_DIR}/inferencesh..."
-sudo mv "${TMP_DIR}/${BINARY_NAME}" "${INSTALL_DIR}/inferencesh"
-
-# Check and remove existing symlink
-if [ -L "${INSTALL_DIR}/infsh" ]; then
-    sudo rm "${INSTALL_DIR}/infsh"
-fi
+mv "${TMP_DIR}/${BINARY_NAME}" "${INSTALL_DIR}/inferencesh"
 
 # Create symlink for alternative name
 echo "Creating 'infsh' symlink..."
-sudo ln -sf "${INSTALL_DIR}/inferencesh" "${INSTALL_DIR}/infsh"
+ln -sf "${INSTALL_DIR}/inferencesh" "${INSTALL_DIR}/infsh"
 
 echo "Installation complete!"
 echo "Try running 'inferencesh' or 'infsh'"
