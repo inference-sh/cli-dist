@@ -53,25 +53,44 @@ else
     INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
 fi
 
-# Set temporary directory and binary name
-TMP_DIR=$(mktemp -d)
-BINARY_NAME="inferencesh-${OS}-${ARCH}"
+# Base URL for downloads
+BASE_URL="https://raw.githubusercontent.com/inference-sh/cli-dist/main"
 
-# Download the binary
-echo "Downloading inferencesh ${VERSION} for ${OS}/${ARCH}..."
-curl -L "https://github.com/inference-labs/inferencesh/releases/download/${VERSION}/${BINARY_NAME}" -o "${TMP_DIR}/${BINARY_NAME}"
-chmod +x "${TMP_DIR}/${BINARY_NAME}"
+# Construct binary name and URL
+BINARY_NAME="inferencesh-${OS}-${ARCH}"
+if [ "${OS}" = "windows" ]; then
+    BINARY_NAME="${BINARY_NAME}.exe"
+fi
+
+DOWNLOAD_URL="${BASE_URL}/${VERSION}/${BINARY_NAME}"
+
+echo "Installing inference.sh CLI..."
+echo "OS: ${OS}"
+echo "Architecture: ${ARCH}"
+echo "Version: ${VERSION}"
+echo "Download URL: ${DOWNLOAD_URL}"
+
+# Create temp directory
+TMP_DIR=$(mktemp -d)
+trap 'rm -rf ${TMP_DIR}' EXIT
 
 # Remove existing installation and symlink
 if [ -f "${INSTALL_DIR}/inferencesh" ]; then
     echo "Removing existing installation..."
-    rm "${INSTALL_DIR}/inferencesh"
+    rm -f "${INSTALL_DIR}/inferencesh"
 fi
 
 if [ -L "${INSTALL_DIR}/infsh" ]; then
     echo "Removing existing symlink..."
-    rm "${INSTALL_DIR}/infsh"
+    rm -f "${INSTALL_DIR}/infsh"
 fi
+
+# Download binary
+echo "Downloading binary..."
+curl -L "${DOWNLOAD_URL}" -o "${TMP_DIR}/${BINARY_NAME}"
+
+# Make binary executable
+chmod +x "${TMP_DIR}/${BINARY_NAME}"
 
 # Move binary to install directory
 echo "Installing to ${INSTALL_DIR}/inferencesh..."
