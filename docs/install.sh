@@ -62,7 +62,12 @@ if [ "${OS}" = "windows" ]; then
     BINARY_NAME="${BINARY_NAME}.exe"
 fi
 
-DOWNLOAD_URL="${BASE_URL}/${VERSION}/${BINARY_NAME}"
+# For 'latest' version, use the /latest path, otherwise use /versions/vX.Y.Z
+if [ "${VERSION}" = "latest" ]; then
+    DOWNLOAD_URL="${BASE_URL}/latest/${BINARY_NAME}"
+else
+    DOWNLOAD_URL="${BASE_URL}/versions/${VERSION}/${BINARY_NAME}"
+fi
 
 echo "Installing inference.sh CLI..."
 echo "OS: ${OS}"
@@ -85,9 +90,19 @@ if [ -L "${INSTALL_DIR}/infsh" ]; then
     rm -f "${INSTALL_DIR}/infsh"
 fi
 
-# Download binary
+# Download binary with better error handling
 echo "Downloading binary..."
-curl -L "${DOWNLOAD_URL}" -o "${TMP_DIR}/${BINARY_NAME}"
+if ! curl -fL "${DOWNLOAD_URL}" -o "${TMP_DIR}/${BINARY_NAME}"; then
+    echo "Error: Failed to download binary from ${DOWNLOAD_URL}"
+    echo "Please check if the binary exists at the specified URL"
+    exit 1
+fi
+
+# Verify the downloaded file is not empty
+if [ ! -s "${TMP_DIR}/${BINARY_NAME}" ]; then
+    echo "Error: Downloaded file is empty"
+    exit 1
+fi
 
 # Make binary executable
 chmod +x "${TMP_DIR}/${BINARY_NAME}"
