@@ -54,9 +54,20 @@ curl -L "${DOWNLOAD_URL}" -o "${TMP_DIR}/${BINARY_NAME}"
 # Make binary executable
 chmod +x "${TMP_DIR}/${BINARY_NAME}"
 
+# Check for existing installation
+if [ -f "${INSTALL_DIR}/inferencesh" ]; then
+    echo "Removing existing installation..."
+    sudo rm "${INSTALL_DIR}/inferencesh"
+fi
+
 # Move binary to install directory
 echo "Installing to ${INSTALL_DIR}/inferencesh..."
 sudo mv "${TMP_DIR}/${BINARY_NAME}" "${INSTALL_DIR}/inferencesh"
+
+# Check and remove existing symlink
+if [ -L "${INSTALL_DIR}/infsh" ]; then
+    sudo rm "${INSTALL_DIR}/infsh"
+fi
 
 # Create symlink for alternative name
 echo "Creating 'infsh' symlink..."
