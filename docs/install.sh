@@ -22,6 +22,7 @@ case ${ARCH} in
         exit 1
         ;;
 esac
+
 # Set install directory and handle platform-specific setup
 if [ "$(id -u)" -ne 0 ] && [ -z "$INSTALL_DIR" ]; then
     INSTALL_DIR="$HOME/.local/bin"
@@ -51,6 +52,16 @@ if [ "$(id -u)" -ne 0 ] && [ -z "$INSTALL_DIR" ]; then
 else
     INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
 fi
+
+# Set temporary directory and binary name
+TMP_DIR=$(mktemp -d)
+BINARY_NAME="inferencesh-${OS}-${ARCH}"
+
+# Download the binary
+echo "Downloading inferencesh ${VERSION} for ${OS}/${ARCH}..."
+curl -L "https://github.com/inference-labs/inferencesh/releases/download/${VERSION}/${BINARY_NAME}" -o "${TMP_DIR}/${BINARY_NAME}"
+chmod +x "${TMP_DIR}/${BINARY_NAME}"
+
 # Remove existing installation and symlink
 if [ -f "${INSTALL_DIR}/inferencesh" ]; then
     echo "Removing existing installation..."
