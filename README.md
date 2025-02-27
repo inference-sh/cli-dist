@@ -4,17 +4,17 @@ binary distribution for the inference.sh CLI tool.
 
 ## quick install
 
-# install latest version
+### install latest version
 ```
 curl -fsSL https://cli.inference.sh/install.sh | bash
 ```
 
-# or install specific version
+### install specific version
 ```
 curl -fsSL https://cli.inference.sh/install.sh | VERSION=1.0.0 bash
 ```
 
-# to verify the installation
+### verify the installation
 ```
 inferencesh --version
 ```
@@ -28,18 +28,16 @@ inferencesh --version
    - windows: [inferencesh-windows-amd64.exe](https://raw.githubusercontent.com/inference-sh/cli-dist/main/latest/inferencesh-windows-amd64.exe)
 
 2. make the binary executable (linux/macos):
-
-    chmod +x ./inferencesh-*
+```
+chmod +x ./inferencesh-*
+```
 
 3. move to a directory in your path:
+```
+sudo mv ./inferencesh-* /usr/local/bin/inferencesh
+```
 
-    # linux/macos
-    sudo mv ./inferencesh-* /usr/local/bin/inferencesh
-
-    # optional: create infsh alias
-    sudo ln -s /usr/local/bin/inferencesh /usr/local/bin/infsh
-
-## version history
-
-### v0.1.0
-
+4. optional: create infsh alias
+```
+sudo ln -s /usr/local/bin/inferencesh /usr/local/bin/infsh
+```
